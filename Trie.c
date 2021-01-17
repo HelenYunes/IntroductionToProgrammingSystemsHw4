@@ -28,10 +28,11 @@ node *addNode(char l)
         {
             n->children[i] = NULL;
         }
+        n->count = 0;
         n->endOfword = FALSE;
         n->word = NULL;
-        n->letter = l; //adds a letter to the trie as a new node
-        n->count = 0;
+        //adds a letter to the trie as a new node
+        n->letter = l;
         return n;
     }
     exit(1);
@@ -47,19 +48,21 @@ node *addWord(node *root, char w)
         node *nw = addNode(currentNode);
         if (root->word != NULL)
         {
-            int length = strlen(root->word);
-            nw->word = (char *)malloc(length + 2);
+            int place1 = strlen(root->word);
+            nw->word = (char *)malloc(place1 + 2);
             if (nw->word == NULL)
                 exit(1);
-            int place1 = strlen(root->word);
             for (int i = 0; i < place1; i++)
                 nw->word[i] = root->word[i];
-            nw->word[place1] = w; //adds a new word to the trie
+            //adds a new word to the trie
+            nw->word[place1] = currentNode;
             nw->word[(place1 + 1)] = 0;
         }
         else
         {
             nw->word = (char *)malloc(2);
+            if (nw->word == NULL)
+                exit(1);
             nw->word[0] = currentNode;
             nw->word[1] = 0;
         }
@@ -80,11 +83,13 @@ void printTrie(node *root)
     {
         printf("%s %ld\n", root->word, root->count);
     }
-    for (int i = 0; i < NUM_LETTERS; i++) //prints the trie by order
+    for (int i = 0; i < NUM_LETTERS; i++)
+    //prints the trie in dictionary order
     {
         printTrie(root->children[i]);
     }
-    free(root->word); //releases the memory that allocated to word
+    //releases the memory that allocated to word
+    free(root->word);
 }
 
 void printReversedTrie(node *root)
@@ -92,7 +97,8 @@ void printReversedTrie(node *root)
     if (root == NULL)
         return;
 
-    for (int i = NUM_LETTERS - 1; i >= 0; i--) //prints the reverse trie
+    for (int i = NUM_LETTERS - 1; i >= 0; i--)
+    //prints the reverse trie
     {
         printReversedTrie(root->children[i]);
     }
@@ -101,7 +107,8 @@ void printReversedTrie(node *root)
 
         printf("%s %ld\n", root->word, root->count);
     }
-    free(root->word); //releases the memory that allocated to word
+    //releases the memory that allocated to word
+    free(root->word);
 }
 void freeRoot(node *root)
 {
@@ -111,7 +118,8 @@ void freeRoot(node *root)
     {
         freeRoot(root->children[i]);
     }
-    free(root); //releases the memory that allocated to root
+    //releases the memory that allocated to root
+    free(root);
 }
 
 int main(int argc, char *argv[])
